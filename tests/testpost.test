@@ -1,0 +1,37 @@
+package require tcltest
+package require json
+
+set _testing true
+
+source ../post.tcl
+
+tcltest::test get_post_normal {
+    Get a post by id
+} -body {
+    set d [ json::json2dict [ get_post 1 ] ]
+    expr {[dict get $d content] == "hello world 0"}
+} -result 1
+
+tcltest::test get_post_error {
+    Get a non existent post
+} -body {
+    set d [ json::json2dict [ get_post 42 ] ]
+    expr {[dict get $d error] == "post with id 42 not found"}
+} -result 1
+
+tcltest::test get_all_count {
+    Get all posts
+} -body {
+    set d [ json::json2dict [get_all] ]
+    llength [dict get $d posts]
+} -result 3
+
+tcltest::test get_all_content {
+    Get all posts
+} -body {
+    set d [ json::json2dict [get_all] ]
+    set post [lindex [dict get $d posts] 0]
+    expr {[dict get $post content] == "hello world 0"}
+} -result 1
+ 
+tcltest::cleanupTests
