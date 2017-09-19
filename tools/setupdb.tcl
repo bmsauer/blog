@@ -7,8 +7,17 @@ package require tdbc::postgres
 
 tdbc::postgres::connection create db -host localhost -user blog_user -password blog_user -database postgres
 
-set stmt [db prepare {CREATE TABLE blog_posts (id serial PRIMARY KEY, content text, date timestamp)}]
+set stmt [db prepare {CREATE TABLE blog_posts (id serial PRIMARY KEY, title text, content text, date timestamp)}]
 if { [catch { set res [$stmt execute] } err ] } {
-    puts "could not create table: $err"
+    puts "could not create posts table: $err"
 }
 $stmt close
+
+set stmt [db prepare {CREATE TABLE blog_tags (post_id integer REFERENCES blog_posts (id), tag text)}]
+if { [catch { set res [$stmt execute] } err ] } {
+    puts "could not create tags table: $err"
+}
+$stmt close
+
+db close
+
