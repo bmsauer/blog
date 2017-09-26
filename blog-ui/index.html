@@ -1,19 +1,102 @@
 <html lang="en">
   <head>
     <title>the blog of brian sauer</title>
-    <meta charset="UTF-8"> 
+    <meta charset="UTF-8">
+    <style>
+      input, textarea{
+      display:block;
+      }
+      html, body{
+      margin:10px;
+      background-color:#66cccc;
+      color:#FFFFFF;
+      font-family: verdana, sans;
+      line-height:1.2;
+      font-size: 1.1em;
+      }
+      body{
+      margin-left:auto;
+      margin-right:auto;
+      max-width: 800px;
+      }
+      h1, h2, h3, h4, h5, h6{
+      font-family: georgia, serif;
+      color:#FFFFCC;
+      }
+      ul.nav {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      }
+      ul.nav li{
+      display:inline-block;
+      background: #FFFFFF;
+      padding:5px;
+      border: 3px outset;
+      }
+      button {
+      background:#FFFFFF;
+      padding:5px;
+      border: 3px outset;
+      }
+      hr{
+      border-color:#FFFFCC;
+      background-color:#FFFFCC;
+      color:#FFFFCC;
+      }
+      #post-list {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      }
+      span.tag {
+      background:#FFFFFF;
+      color: #66CCCC;
+      }
+    </style>
   </head>
   
   <body>
     <div id="blogapp">
       <h1>the blog of brian sauer</h1>
-      <ul>
-	<li><a href="#/">all posts</a></li>
-	<li><a href="#/tag/red">red posts</a></li>
+      <ul class="nav">
+	<li><a href="#/">All</a></li>
+	<li><a href="#/tag/tech">Technology</a></li>
+	<li><a href="#/tag/humanity">Humanity</a></li>
+	<li><a href="#/tag/music">Music</a></li>
       </ul>
-      <div id="post-full"></div>
-      <ul id="post-list"></ul>
-      <button id="load-more">Load More</button>
+      <hr/>
+      <div id="post-full" style="display:none;"></div>
+      <div id="post-list-container">
+	<ul id="post-list"></ul>
+	<button id="load-more">Load More</button>
+      </div>
+      <div id="admin" style="display:none;">
+	<h3>Login</h3>
+	<form id="login-credentials">
+	  <label for="username">Username</label>
+	  <input type="text" name="username" id="username" />
+	  <label for="password">Password</label>
+	  <input type="password" name="password" id="password" />
+	</form>
+	<h3>Create</h3>
+	<form id="create-post">
+	  <label for="create-title">Title</label>
+	  <input type="text" name="create-title" id="create-title" />
+	  <label for="create-content">Content</label>
+	  <textarea name="create-content" id="create-content"></textarea>
+	  <label for="create-tags">Tags</label>
+	  <input type="text" name="create-tags" id="create-tags" />
+	</form>
+	<button id="create-button">Create</button>
+	<h3>Delete</h3>
+	<form id="delete-post">
+	  <label for="delete-id">Id</label>
+	  <input type="text" name="delete-id" id="delete-id" />
+	</form>
+	<button id="delete-button">Delete</button>
+      </div>
+	  
     </div>
 
     <script type="text/template" id="post-summary-template">
@@ -22,7 +105,7 @@
 	<p><i><%- date %></i></p>
 	<p>
 	<% _(tags).each(function(tag) { %>
-	<span><%- tag %> </span>
+	<span class="tag"><%- tag %> </span>
 	<% }) %>
 	</p>
       </div>
@@ -35,10 +118,9 @@
 	<p><i><%- date %></i></p>
 	<p>
 	<% _(tags).each(function(tag) { %>
-	<span><%- tag %> </span>
+	<span class="tag"><%- tag %> </span>
 	<% }) %>
 	</p>
-	<a href="#">Home</a>
       </div>
     </script>
 

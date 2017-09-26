@@ -1,0 +1,78 @@
+package require tcltest
+package require json
+package require json::write
+
+set _testing true
+
+source ../postw.tcl
+
+proc dict_post {title content tags} {
+    dict set post title $title
+    dict set post content $content
+    dict set post tags $tags
+    return $post
+}
+
+proc get_all_rows_sql {sql {query_values ""}} {
+    set rows [list]
+    set stmt [db prepare $sql]
+    try {
+	set res [$stmt execute $query_values]
+	try {
+	    set rows [$res allrows]
+	} finally {
+	    $res close
+	}
+    } finally {
+	$stmt close
+    }
+    return $rows
+}
+
+proc cleanup_test_posts {} {
+    set stmt [db prepare {DELETE FROM blog_tags WHERE tag = 'test_tag'}]
+    try {
+	$stmt execute
+    } finally {
+	$stmt close
+    }
+    set stmt [db prepare {DELETE FROM blog_posts WHERE content = 'test_content'}]
+    try {
+	$stmt execute
+    } finally {
+	$stmt close
+    }
+}
+
+tcltest::test create_post {
+    Create a post
+} -body {
+    set post [dict_post "test_title" "test_content" [list test_tag test_tag]]
+    create_post $post
+    set rows [get_all_rows_sql {SELECT id, title from blog_posts WHERE content = 'test_content'}]
+    set post_id [lindex [lindex $rows 0] 1]
+    dict set query_values post_id $post_id
+    set rows_tag [get_all_rows_sql {SELECT tag from blog_tags WHERE post_id = :post_id} $query_values ]
+    expr {[llength $rows] == 1 && [llength $rows_tag] == 2 && [lindex [lindex $rows 0] 3] == "test_title"}
+} -result 1 -cleanup {
+    cleanup_test_posts
+}
+
+tcltest::test delete_post {
+    Delete a post
+} -body {
+    set post [dict_post "test_title" "test_content" [list test_tag test_tag]]
+    create_post $post
+    set rows [get_all_rows_sql {SELECT id, title from blog_posts WHERE content = 'test_content'}]
+    set post_id [lindex [lindex $rows 0] 1]
+    dict set data id $post_id
+    delete_post $data
+    dict set query_values post_id $post_id
+    set rows_tag [get_all_rows_sql {SELECT tag from blog_tags WHERE post_id = :post_id} $query_values ]
+    set rows [get_all_rows_sql {SELECT * from blog_posts WHERE id = :post_id} $query_values ]
+    expr {[llength $rows] == 0 && [llength $rows_tag] == 0}
+} -result 1 -cleanup {
+    cleanup_test_posts
+}
+    
+tcltest::cleanupTests

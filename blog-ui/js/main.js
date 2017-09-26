@@ -3,17 +3,52 @@ $(function(){
     var Post = Backbone.Model.extend({
 	defaults: function() {
 	    return {
-		id: 0,
 		content: "no content",
-		date: 0,
 		title: "no title",
 		tags: [],
 	    };
 	},
-
-	//sync: function(method, model, options) {
-
-	//}
+	
+	sync: function(method, model) {
+	    if(method == "create"){
+		var json = JSON.stringify(model);
+		var form_data = new FormData();
+		form_data.append("create", json)
+		$.ajax({
+		    method: "POST",
+		    url: "http://localhost/cgi-bin/postw.tcl",
+		    data: form_data,
+		    processData: false,
+		    contentType: false,
+		    error: function(msg, status, error){
+			alert("An error has occurred: " + JSON.stringify(msg) + " " + status + " " + error);
+		    }
+		})
+		    .done(function( msg ) {
+			model.set('id', msg["id"]);
+			alert( "Data Saved: " + JSON.stringify(msg) );
+		    });
+	    } else if(method == "delete"){
+		var json = JSON.stringify(model);
+		var form_data = new FormData();
+		form_data.append("delete", json)
+		$.ajax({
+		    method: "POST",
+		    url: "http://localhost/cgi-bin/postw.tcl",
+		    data: form_data,
+		    processData: false,
+		    contentType: false,
+		    error: function(msg, status, error){
+			alert("An error has occurred: " + JSON.stringify(msg) + " " + status + " " + error);
+		    }
+		})
+		    .done(function( msg ) {
+			alert( "Deleted: " + JSON.stringify(msg) );
+		    });
+	    }
+	    //alert(method + ": " + JSON.stringify(model));
+	    //model.set('id', 0);
+	}
     });
 
     var PostList = Backbone.Collection.extend({
@@ -72,6 +107,8 @@ $(function(){
 	current_page: 1,
 	events: {
 	    "click #load-more": "load_next_page",
+	    "click #create-button": "create",
+	    "click #delete-button": "destroy",
 	},
 	
 	initialize: function(){
@@ -111,8 +148,22 @@ $(function(){
 	    this.render_list(this.collection.models)
 	},
 
-	
-	
+	create: function(){
+	    var title = $("#create-title").val();
+	    var content = $("#create-content").val();
+	    var tags = $("#create-tags").val().split(",").map(function(item) {
+		return item.trim();
+	    });
+	    var new_post = new Post({"title": title, "content": content, "tags": tags});
+	    new_post.save();
+	},
+
+	destroy: function(){
+	    var id = $("#delete-id").val();
+	    var post = Posts.get(id);
+	    post.destroy();
+	},
+
     });
 
     var App = new AppView;
@@ -123,25 +174,37 @@ $(function(){
 	    "#/": "home",
 	    "post/:post_id": "display_post",
 	    "tag/:tag_name": "display_tag",
+	    "admin": "admin",
 	},
 
-	home: function(){
-	    App.render_all();
+	hide_all: function(){
 	    $("#post-full").hide();
-	    $("#post-list").show();
+	    $("#post-list-container").hide();
+	    $("#admin").hide();
+	},
+	
+	home: function(){
+	    this.hide_all();
+	    App.render_all();
+	    $("#post-list-container").show();
 	},
 
 	display_post: function(post_id) {
+	    this.hide_all();
 	    var view = new PostFullView({model: Posts.get(post_id)})
 	    $("#post-full").html(view.render().el);
 	    $("#post-full").show();
-	    $("#post-list").hide();
 	},
 
 	display_tag: function(tag_name) {
+	    this.hide_all();
 	    App.render_tag(tag_name);
-	    $("#post-full").hide();
 	    $("#post-list").show();
+	},
+
+	admin: function(){
+	    this.hide_all();
+	    $("#admin").show();
 	}
 	
     });

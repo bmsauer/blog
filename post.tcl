@@ -81,7 +81,7 @@ proc get_all_rows_sql {sql {query_values ""}} {
     set rows [list]
     set stmt [db prepare $sql]
     try {
-	    set res [$stmt execute $query_values]
+	set res [$stmt execute $query_values]
 	try {
 	    set rows [$res allrows]
 	} finally {
