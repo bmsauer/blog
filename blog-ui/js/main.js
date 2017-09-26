@@ -1,5 +1,5 @@
 $(function(){
-    
+    var blog_api_base = ___BLOG_API_BASE___
     var Post = Backbone.Model.extend({
 	defaults: function() {
 	    return {
@@ -16,7 +16,7 @@ $(function(){
 		form_data.append("create", json)
 		$.ajax({
 		    method: "POST",
-		    url: "http://localhost/cgi-bin/postw.tcl",
+		    url: blog_api_base + "postw.tcl",
 		    data: form_data,
 		    processData: false,
 		    contentType: false,
@@ -34,7 +34,7 @@ $(function(){
 		form_data.append("delete", json)
 		$.ajax({
 		    method: "POST",
-		    url: "http://localhost/cgi-bin/postw.tcl",
+		    url: blog_api_base + "postw.tcl",
 		    data: form_data,
 		    processData: false,
 		    contentType: false,
@@ -53,7 +53,7 @@ $(function(){
 
     var PostList = Backbone.Collection.extend({
 	model: Post,
-	url: 'http://localhost/cgi-bin/post.tcl',
+	url: blog_api_base + 'post.tcl',
 	parse: function(response) {
 	    return response.posts;
 	},

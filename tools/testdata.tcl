@@ -3,7 +3,7 @@
 package require Tcl 8.6
 package require tdbc::postgres
 
-tdbc::postgres::connection create db -host localhost -user blog_user -password blog_user -database postgres
+tdbc::postgres::connection create db -host ___BLOG_DB_HOSTNAME___ -user ___BLOG_DB_USERNAME___ -password ___BLOG_DB_PASSWORD___ -database ___BLOG_DB_DATABASE___
 
 for { set i 0 } { $i < 3 } {incr i} {
     set title "title $i"

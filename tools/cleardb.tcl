@@ -3,14 +3,14 @@
 package require Tcl 8.6
 package require tdbc::postgres
 
-puts -nonewline {This will remove data from the db, continue? [Y/n]: }
+puts -nonewline {This will remove data from the db at ___BLOG_DB_HOSTNAME___, continue? [Y/n]: }
 flush stdout
 set confirm [gets stdin]
 if { $confirm != "Y" } { exit }
 
 
 # posts
-tdbc::postgres::connection create db -host localhost -user blog_user -password blog_user -database postgres
+tdbc::postgres::connection create db -host ___BLOG_DB_HOSTNAME___ -user ___BLOG_DB_USERNAME___ -password ___BLOG_DB_PASSWORD___ -database ___BLOG_DB_DATABASE___
 
 set stmt [db prepare {DROP TABLE blog_tags}]
 if { [catch { set res [$stmt execute] } err ] } {
