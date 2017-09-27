@@ -1,6 +1,8 @@
 SHELL = /bin/bash
 
 BUILD_DIR = dist_$$BLOG_BUILD_NAME
+#Escape special chars from password, for sed
+REPLACE_PASSWORD = $$(echo $$BLOG_DB_PASSWORD | sed -e 's/\\/\\\\/g; s/\//\\\//g; s/&/\\\&/g')
 build:
 	- mkdir $(BUILD_DIR)
 	cp post.tcl $(BUILD_DIR)
@@ -13,7 +15,7 @@ build:
 	find $(BUILD_DIR) -name '*.tcl' -exec sed -i "s/___BLOG_DB_HOSTNAME___/$$BLOG_DB_HOSTNAME/g" {} \;
 	find $(BUILD_DIR) -name '*.tcl' -exec sed -i "s/___BLOG_DB_DATABASE___/$$BLOG_DB_DATABASE/g" {} \;
 	find $(BUILD_DIR) -name '*.tcl' -exec sed -i "s/___BLOG_DB_USERNAME___/$$BLOG_DB_USERNAME/g" {} \;	
-	find $(BUILD_DIR) -name '*.tcl' -exec sed -i "s/___BLOG_DB_PASSWORD___/$$BLOG_DB_PASSWORD/g" {} \;
+	find $(BUILD_DIR) -name '*.tcl' -exec sed -i "s/___BLOG_DB_PASSWORD___/$(REPLACE_PASSWORD)/g" {} \;
 	#js files
 	find $(BUILD_DIR) -name '*.js' -exec sed -i "s|___BLOG_API_BASE___|$$BLOG_API_BASE|g" {} \;
 

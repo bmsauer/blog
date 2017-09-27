@@ -10,7 +10,7 @@ if { $confirm != "Y" } { exit }
 
 
 # posts
-tdbc::postgres::connection create db -host ___BLOG_DB_HOSTNAME___ -user ___BLOG_DB_USERNAME___ -password ___BLOG_DB_PASSWORD___ -database ___BLOG_DB_DATABASE___
+tdbc::postgres::connection create db -host {___BLOG_DB_HOSTNAME___} -user {___BLOG_DB_USERNAME___} -password {___BLOG_DB_PASSWORD___} -database {___BLOG_DB_DATABASE___}
 
 set stmt [db prepare {DROP TABLE blog_tags}]
 if { [catch { set res [$stmt execute] } err ] } {

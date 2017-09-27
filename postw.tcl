@@ -8,7 +8,7 @@ package require json::write
 ##global vars
 ::ncgi::parse
 set output [list]
-tdbc::postgres::connection create db -host ___BLOG_DB_HOSTNAME___ -user ___BLOG_DB_USERNAME___ -password ___BLOG_DB_PASSWORD___ -database ___BLOG_DB_DATABASE___
+tdbc::postgres::connection create db -host {___BLOG_DB_HOSTNAME___} -user {___BLOG_DB_USERNAME___} -password {___BLOG_DB_PASSWORD___} -database {___BLOG_DB_DATABASE___}
 
 proc parse_json {key} {
     set raw_json [::ncgi::value $key]
