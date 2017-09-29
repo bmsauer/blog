@@ -107,7 +107,7 @@ proc main {} {
 	lappend output "method not allowed"
     }
 
-    ::ncgi::header application/json
+    ::ncgi::header application/json Access-Control-Allow-Origin *
     foreach {line} $output {
 	puts "$line"
     }

@@ -117,7 +117,7 @@ proc main {} {
 	lappend output $result
     }
 
-    ::ncgi::header application/json
+    ::ncgi::header application/json Access-Control-Allow-Origin *
     #puts [::ncgi::nvlist]
     foreach {line} $output {
 	puts "$line"

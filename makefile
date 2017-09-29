@@ -24,5 +24,5 @@ clean:
 
 deploy-local:
 	sudo cp $(BUILD_DIR)/post.tcl /usr/lib/cgi-bin/
-	sudo cp $(BUILD_DIR)/post.tcl /usr/lib/cgi-bin/
+	sudo cp $(BUILD_DIR)/postw.tcl /usr/lib/cgi-bin/
 	sudo cp -R $(BUILD_DIR)/blog-ui /var/www/blog-ui/
