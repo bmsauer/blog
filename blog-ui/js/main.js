@@ -1,5 +1,4 @@
 $(function(){
-    var blog_api_base = ___BLOG_API_BASE___
     var Post = Backbone.Model.extend({
 	defaults: function() {
 	    return {
@@ -10,37 +9,53 @@ $(function(){
 	},
 	
 	sync: function(method, model) {
+	    var username = $("#username").val()
+	    var password = $("#password").val()
+	    var json = JSON.stringify(model);
+	    var form_data = new FormData();
 	    if(method == "create"){
-		var json = JSON.stringify(model);
-		var form_data = new FormData();
 		form_data.append("create", json)
 		$.ajax({
 		    method: "POST",
-		    url: blog_api_base + "postw.tcl",
+		    url: "___BLOG_UI_POSTW_URL___",
 		    data: form_data,
 		    processData: false,
 		    contentType: false,
 		    error: function(msg, status, error){
-			alert("An error has occurred: " + JSON.stringify(msg) + " " + status + " " + error);
-		    }
+			if(status == 401){
+			    alert("Auth error; please check credentials");
+			}
+			else{
+			    alert("An error has occurred: " + JSON.stringify(msg) + " " + status + " " + error);
+			}
+		    },
+		    beforeSend: function (xhr) {
+			xhr.setRequestHeader ("Authorization", "Basic " + btoa(username + ":" + password));
+		    },
 		})
 		    .done(function( msg ) {
 			model.set('id', msg["id"]);
 			alert( "Data Saved: " + JSON.stringify(msg) );
 		    });
 	    } else if(method == "delete"){
-		var json = JSON.stringify(model);
-		var form_data = new FormData();
 		form_data.append("delete", json)
 		$.ajax({
 		    method: "POST",
-		    url: blog_api_base + "postw.tcl",
+		    url: "___BLOG_UI_POSTW_URL___",
 		    data: form_data,
 		    processData: false,
 		    contentType: false,
 		    error: function(msg, status, error){
-			alert("An error has occurred: " + JSON.stringify(msg) + " " + status + " " + error);
-		    }
+			if(status == 401){
+			    alert("Auth error; please check credentials");
+			}
+			else{
+			    alert("An error has occurred: " + JSON.stringify(msg) + " " + status + " " + error);
+			}
+		    },
+		    beforeSend: function (xhr) {
+			xhr.setRequestHeader ("Authorization", "Basic " + btoa(username + ":" + password));
+		    },
 		})
 		    .done(function( msg ) {
 			alert( "Deleted: " + JSON.stringify(msg) );
@@ -53,7 +68,7 @@ $(function(){
 
     var PostList = Backbone.Collection.extend({
 	model: Post,
-	url: blog_api_base + 'post.tcl',
+	url: "___BLOG_UI_POST_URL___",
 	parse: function(response) {
 	    return response.posts;
 	},
@@ -161,7 +176,7 @@ $(function(){
 	destroy: function(){
 	    var id = $("#delete-id").val();
 	    var post = Posts.get(id);
-	    post.destroy();
+	    post.destroy({wait:true});
 	},
 
     });

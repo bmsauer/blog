@@ -17,7 +17,8 @@ build:
 	find $(BUILD_DIR) -name '*.tcl' -exec sed -i "s/___BLOG_DB_USERNAME___/$$BLOG_DB_USERNAME/g" {} \;	
 	find $(BUILD_DIR) -name '*.tcl' -exec sed -i "s/___BLOG_DB_PASSWORD___/$(REPLACE_PASSWORD)/g" {} \;
 	#js files
-	find $(BUILD_DIR) -name '*.js' -exec sed -i "s|___BLOG_API_BASE___|$$BLOG_API_BASE|g" {} \;
+	find $(BUILD_DIR) -name '*.js' -exec sed -i "s|___BLOG_UI_POSTW_URL___|$$BLOG_UI_POSTW_URL|g" {} \;
+	find $(BUILD_DIR) -name '*.js' -exec sed -i "s|___BLOG_UI_POST_URL___|$$BLOG_UI_POST_URL|g" {} \;
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -25,4 +26,4 @@ clean:
 deploy-local:
 	sudo cp $(BUILD_DIR)/post.tcl /usr/lib/cgi-bin/
 	sudo cp $(BUILD_DIR)/postw.tcl /usr/lib/cgi-bin/
-	sudo cp -R $(BUILD_DIR)/blog-ui /var/www/blog-ui/
+	sudo cp -R $(BUILD_DIR)/blog-ui /var/www

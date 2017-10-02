@@ -97,7 +97,7 @@ proc main {} {
     if { $::env(REQUEST_METHOD) == "GET" } {
 	set id [::ncgi::value id]
 	set page [expr {[::ncgi::value page] == "" ? 1 : [::ncgi::value page]}]
-	set pagesize [expr {[::ncgi::value pagesize] == "" ? 2 : [::ncgi::value pagesize]}]
+	set pagesize [expr {[::ncgi::value pagesize] == "" ? 10 : [::ncgi::value pagesize]}]
 	if { $id == ""} {
 	    lappend output [get_all $page $pagesize]
 	} else {
