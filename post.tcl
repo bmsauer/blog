@@ -1,11 +1,11 @@
 #!/usr/bin/env tclsh8.6
 package require Tcl 8.6
-package require ncgi
 package require tdbc::postgres
 package require json::write
+source bcgi.tcl
+
 
 ## global vars
-::ncgi::parse
 set output [list]
 tdbc::postgres::connection create db -host {___BLOG_DB_HOSTNAME___} -user {___BLOG_DB_USERNAME___} -password {___BLOG_DB_PASSWORD___} -database {___BLOG_DB_DATABASE___}
 
@@ -95,9 +95,10 @@ proc get_all_rows_sql {sql {query_values ""}} {
 
 proc main {} {
     if { $::env(REQUEST_METHOD) == "GET" } {
-	set id [::ncgi::value id]
-	set page [expr {[::ncgi::value page] == "" ? 1 : [::ncgi::value page]}]
-	set pagesize [expr {[::ncgi::value pagesize] == "" ? 10 : [::ncgi::value pagesize]}]
+	set query [parse_query_string $::env(QUERY_STRING)]
+	set id [expr {[dict exist $query id] == 0  ? "" : [dict get $query id]}]
+	set page [expr {[dict exist $query page] == 0 ? 1 : [dict get $query page]}]
+	set pagesize [expr {[dict exist $query pagesize] == 0 ? 10 : [dict get $query pagesize]}]
 	if { $id == ""} {
 	    lappend output [get_all $page $pagesize]
 	} else {
@@ -107,7 +108,7 @@ proc main {} {
 	lappend output "method not allowed"
     }
 
-    ::ncgi::header application/json Access-Control-Allow-Origin *
+    output_headers application/json Access-Control-Allow-Origin *
     foreach {line} $output {
 	puts "$line"
     }

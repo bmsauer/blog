@@ -1,17 +1,16 @@
 #!/usr/bin/env tclsh8.6
 package require Tcl 8.6
-package require ncgi
 package require tdbc::postgres
 package require json
 package require json::write
+source bcgi.tcl
 
 ##global vars
-::ncgi::parse
 set output [list]
 tdbc::postgres::connection create db -host {___BLOG_DB_HOSTNAME___} -user {___BLOG_DB_USERNAME___} -password {___BLOG_DB_PASSWORD___} -database {___BLOG_DB_DATABASE___}
 
-proc parse_json {key} {
-    set raw_json [::ncgi::value $key]
+proc parse_json {} {
+    set raw_json [get_body]
     set d [json::json2dict $raw_json]
     return $d
 }
@@ -82,31 +81,26 @@ proc delete_post {data} {
 
 proc main {} {
     if { $::env(REQUEST_METHOD) == "POST" } {
-	if { [::ncgi::value create] != "" } {
-	    #create
-	    if { [catch { set data [parse_json create] } err] } {
-		set result [json::write object \
-				error [json::write string "failed to parse json: $err"]
-			   ]
-	    } elseif { [catch { set result [create_post $data] } err] } {
-		set result [json::write object \
-				error [json::write string "failed to create post: $err"]
-			   ]
-	    }
-	} elseif { [::ncgi::value delete] != "" } {
-	    #delete
-	    if { [catch { set data [parse_json delete] } err] } {
-		set result [json::write object \
-				error [json::write string "failed to parse json: $err"]
-			   ]
-	    } elseif { [catch { set result [delete_post $data] } err] } {
-		set result [json::write object \
-				error [json::write string "failed to delete post: $err"]
-			   ]
-	    }
-	} else {
+	#create
+	if { [catch { set data [parse_json] } err] } {
 	    set result [json::write object \
-			    error [json::write string "failed to parse json: key error"]
+			    error [json::write string "failed to parse json: $err"]
+		       ]
+	} elseif { [catch { set result [create_post $data] } err] } {
+	    set result [json::write object \
+			    error [json::write string "failed to create post: $err"]
+		       ]
+	}
+	lappend output $result
+    } elseif {$::env(REQUEST_METHOD) == "DELETE"} {
+	#delete
+	if { [catch { set data [parse_json] } err] } {
+	    set result [json::write object \
+			    error [json::write string "failed to parse json: $err"]
+		       ]
+	} elseif { [catch { set result [delete_post $data] } err] } {
+	    set result [json::write object \
+			    error [json::write string "failed to delete post: $err"]
 		       ]
 	}
 	lappend output $result
@@ -117,8 +111,7 @@ proc main {} {
 	lappend output $result
     }
 
-    ::ncgi::header application/json Access-Control-Allow-Origin *
-    #puts [::ncgi::nvlist]
+    output_headers application/json Access-Control-Allow-Origin *
     foreach {line} $output {
 	puts "$line"
     }

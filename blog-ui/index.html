@@ -52,6 +52,9 @@
       span.tag {
       background:#FFFFFF;
       color: #66CCCC;
+      margin-right: 1px;
+      padding-left: 2px;
+      padding-right: 2px;
       }
     </style>
   </head>
@@ -61,7 +64,7 @@
       <h1>the blog of brian sauer</h1>
       <ul class="nav">
 	<li><a href="#/">All</a></li>
-	<li><a href="#/tag/tech">Technology</a></li>
+	<li><a href="#/tag/technology">Technology</a></li>
 	<li><a href="#/tag/humanity">Humanity</a></li>
 	<li><a href="#/tag/music">Music</a></li>
       </ul>
@@ -115,7 +118,7 @@
     <script type="text/template" id="post-full-template">
       <div>
 	<h2><%- title %></h2>
-	<p><%- content %></p>
+	<p><%= content %></p>
 	<p><i><%- date %></i></p>
 	<p>
 	<% _(tags).each(function(tag) { %>

@@ -12,15 +12,13 @@ $(function(){
 	    var username = $("#username").val()
 	    var password = $("#password").val()
 	    var json = JSON.stringify(model);
-	    var form_data = new FormData();
 	    if(method == "create"){
-		form_data.append("create", json)
 		$.ajax({
 		    method: "POST",
 		    url: "___BLOG_UI_POSTW_URL___",
-		    data: form_data,
+		    data: json,
 		    processData: false,
-		    contentType: false,
+		    contentType: "application/json",
 		    error: function(msg, status, error){
 			if(status == 401){
 			    alert("Auth error; please check credentials");
@@ -38,13 +36,12 @@ $(function(){
 			alert( "Data Saved: " + JSON.stringify(msg) );
 		    });
 	    } else if(method == "delete"){
-		form_data.append("delete", json)
 		$.ajax({
-		    method: "POST",
+		    method: "DELETE",
 		    url: "___BLOG_UI_POSTW_URL___",
-		    data: form_data,
+		    data: json,
 		    processData: false,
-		    contentType: false,
+		    contentType: "application/json",
 		    error: function(msg, status, error){
 			if(status == 401){
 			    alert("Auth error; please check credentials");
@@ -109,7 +106,9 @@ $(function(){
 	initialize:function() {},
 
 	render: function(){
-	    this.$el.html(this.template(this.model.toJSON()));
+	    var json = this.model.toJSON();
+	    json["content"] = json["content"].replace(/\n/g, "<br />");
+	    this.$el.html(this.template(json));
 	    return this;
 	},
 	
@@ -156,7 +155,7 @@ $(function(){
 	},
     
 	render_tag:function(tag_name) {
-	    this.render_list(this.collection.byTag(tag_name));
+	    this.render_list(this.collection.byTag(tag_name.trim()));
 	},
 
 	render_all:function() {
@@ -176,7 +175,12 @@ $(function(){
 	destroy: function(){
 	    var id = $("#delete-id").val();
 	    var post = Posts.get(id);
-	    post.destroy({wait:true});
+	    if(post){
+		post.destroy({wait:true});
+	    }
+	    else{
+		alert("Post with that id not found!")
+	    }
 	},
 
     });
@@ -214,7 +218,7 @@ $(function(){
 	display_tag: function(tag_name) {
 	    this.hide_all();
 	    App.render_tag(tag_name);
-	    $("#post-list").show();
+	    $("#post-list-container").show();
 	},
 
 	admin: function(){

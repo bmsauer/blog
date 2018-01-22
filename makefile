@@ -7,6 +7,7 @@ build:
 	- mkdir $(BUILD_DIR)
 	cp post.tcl $(BUILD_DIR)
 	cp postw.tcl $(BUILD_DIR)
+	cp bcgi.tcl $(BUILD_DIR)
 	cp -R tools $(BUILD_DIR)/tools/
 	cp -R tests $(BUILD_DIR)/tests/
 	cp -R blog-ui $(BUILD_DIR)/blog-ui/
@@ -26,4 +27,8 @@ clean:
 deploy-local:
 	sudo cp $(BUILD_DIR)/post.tcl /usr/lib/cgi-bin/
 	sudo cp $(BUILD_DIR)/postw.tcl /usr/lib/cgi-bin/
+	sudo cp $(BUILD_DIR)/bcgi.tcl /usr/lib/cgi-bin/
+	sudo cp -R $(BUILD_DIR)/blog-ui /var/www
+
+deploy-local-ui:
 	sudo cp -R $(BUILD_DIR)/blog-ui /var/www
