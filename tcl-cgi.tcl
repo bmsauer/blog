@@ -1,4 +1,4 @@
-#bcgi: snippets grabbed from ncgi
+#tcl-cgi: snippets grabbed from ncgi for bare bones TCL cgi scripts
 package require Tcl 8.6
 
 proc url_decode {str} {

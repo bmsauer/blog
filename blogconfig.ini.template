@@ -1,0 +1,6 @@
+[main]
+db_hostname = xxxx
+db_username = xxxx
+db_password = xxxx
+db_database = xxxx
+bcgi_lib_path = xxxx

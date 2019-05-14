@@ -3,11 +3,21 @@ package require Tcl 8.6
 package require tdbc::postgres
 package require json
 package require json::write
-source bcgi.tcl
+package require inifile
+
+set config [::ini::open ___CONFIG_FILE_PATH___ r]
+set db_hostname [::ini::value $config main db_hostname]
+set db_username [::ini::value $config main db_username]
+set db_password [::ini::value $config main db_password]
+set db_database [::ini::value $config main db_database]
+set tcl_cgi_lib_path [::ini::value $config main tcl_cgi_lib_path]
+::ini::close $config
+
+source $tcl_cgi_lib_path
 
 ##global vars
 set output [list]
-tdbc::postgres::connection create db -host {___BLOG_DB_HOSTNAME___} -user {___BLOG_DB_USERNAME___} -password {___BLOG_DB_PASSWORD___} -database {___BLOG_DB_DATABASE___}
+tdbc::postgres::connection create db -host $db_hostname -user $db_username -password $db_password -database $db_database
 
 proc parse_json {} {
     set raw_json [get_body]
