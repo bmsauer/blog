@@ -40,3 +40,7 @@ Testing:
 4) Build with make build
 5) cd into dist_test/tests
 6) run ./all.tcl
+
+TODO:
+1) When choosing tag in UI, should reload all elements by tag.  Currently, it only filters
+   currently showing elements, hiding posts until you click "load more".
